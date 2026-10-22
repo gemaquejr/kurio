@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { PriceFilter } from './price-filter'
 
 const collections = [
@@ -87,25 +86,19 @@ function FilterGroup({
     )
 }
 
-export function Filters() {
-    const [selectedCollections, setSelectedCollections] = useState<string[]>([
-        'digital-art',
-    ])
+type FiltersProps = {
+    selectedCollections: string[]
+    onCollectionToggle: (id: string) => void
+    selectedNetworks: string[]
+    onNetworkToggle: (id: string) => void
+}
 
-    const [selectedNetworks, setSelectedNetworks] = useState<string[]>([])
-
-    function toggleSelection(
-        id: string,
-        selected: string[],
-        setSelected: (value: string[]) => void,
-    ) {
-        setSelected(
-            selected.includes(id)
-                ? selected.filter((item) => item !== id)
-                : [...selected, id],
-        )
-    }
-
+export function Filters({
+    selectedCollections,
+    onCollectionToggle,
+    selectedNetworks,
+    onNetworkToggle,
+}: FiltersProps) {
     return (
         <div className="w-full bg-[#241612] p-5">
             <div className="flex flex-col gap-10">
@@ -113,13 +106,7 @@ export function Filters() {
                     title="Coleções"
                     options={collections}
                     selected={selectedCollections}
-                    onToggle={(id) =>
-                        toggleSelection(
-                            id,
-                            selectedCollections,
-                            setSelectedCollections,
-                        )
-                    }
+                    onToggle={onCollectionToggle}
                 />
 
                 <PriceFilter />
@@ -128,9 +115,7 @@ export function Filters() {
                     title="Rede"
                     options={networks}
                     selected={selectedNetworks}
-                    onToggle={(id) =>
-                        toggleSelection(id, selectedNetworks, setSelectedNetworks)
-                    }
+                    onToggle={onNetworkToggle}
                 />
             </div>
         </div>

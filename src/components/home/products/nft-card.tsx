@@ -4,6 +4,8 @@ export type Nft = {
     price?: number
     previousPrice?: number
     image: string
+    collection?: string
+    network?: 'ethereum' | 'polygon' | 'solana'
 }
 
 type NftCardProps = {

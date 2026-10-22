@@ -6,6 +6,18 @@ import { NftGrid } from './nft-grid'
 import { ProductPagination } from './product-pagination'
 import { nfts } from './nft-data'
 
+const collectionNames: Record<string, string> = {
+    'digital-art': 'Arte digital',
+    photography: 'Fotografia',
+    music: 'Música',
+    '3d-art': 'Arte 3D',
+    collectibles: 'Colecionáveis',
+    generative: 'Generativa',
+    gaming: 'Jogos',
+    memberships: 'Assinaturas',
+    utility: 'Utilidade',
+}
+
 export function Products() {
     const [activeTab, setActiveTab] = useState<
         'all' | 'new' | 'trending'
@@ -17,8 +29,40 @@ export function Products() {
 
     const [currentPage, setCurrentPage] = useState(1)
 
+    const [selectedCollections, setSelectedCollections] = useState<string[]>([])
+
+    const [selectedNetworks, setSelectedNetworks] = useState<string[]>([])
+
+    function handleNetworkToggle(id: string) {
+        setSelectedNetworks((current) =>
+            current.includes(id)
+                ? current.filter((item) => item !== id)
+                : [...current, id],
+        )
+    }
+
+    const filteredNfts = useMemo(() => {
+        const selectedNames = selectedCollections.map(
+            (id) => collectionNames[id],
+        )
+
+        return nfts.filter((nft) => {
+            const matchesCollection =
+                selectedCollections.length === 0 ||
+                (nft.collection !== undefined &&
+                    selectedNames.includes(nft.collection))
+
+            const matchesNetwork =
+                selectedNetworks.length === 0 ||
+                (nft.network !== undefined &&
+                    selectedNetworks.includes(nft.network))
+
+            return matchesCollection && matchesNetwork
+        })
+    }, [selectedCollections, selectedNetworks])
+
     const sortedNfts = useMemo(() => {
-        const items = [...nfts]
+        const items = [...filteredNfts]
 
         switch (sortBy) {
             case 'price-low':
@@ -34,7 +78,15 @@ export function Products() {
             default:
                 return items
         }
-    }, [sortBy])
+    }, [filteredNfts, sortBy])
+
+    function handleCollectionToggle(id: string) {
+        setSelectedCollections((current) =>
+            current.includes(id)
+                ? current.filter((item) => item !== id)
+                : [...current, id],
+        )
+    }
 
     return (
         <section
@@ -46,7 +98,12 @@ export function Products() {
                 aria-label="Filtros do marketplace"
                 className="flex min-w-0 flex-col gap-6"
             >
-                <Filters />
+                <Filters
+                    selectedCollections={selectedCollections}
+                    onCollectionToggle={handleCollectionToggle}
+                    selectedNetworks={selectedNetworks}
+                    onNetworkToggle={handleNetworkToggle}
+                />
                 <FeaturedNft />
             </aside>
 
@@ -61,13 +118,31 @@ export function Products() {
                     onSortChange={setSortBy}
                 />
 
-                <NftGrid nfts={sortedNfts} />
+                {sortedNfts.length > 0 ? (
+                    <NftGrid nfts={sortedNfts} />
+                ) : (
+                    <div
+                        role="status"
+                        className="flex min-h-87.5 flex-col items-center justify-center gap-3 rounded-xl bg-[#241612] px-6 text-center"
+                    >
+                        <h3 className="text-lg font-bold text-[#F5F1EB]">
+                            Nenhum NFT encontrado
+                        </h3>
 
-                <ProductPagination
-                    currentPage={currentPage}
-                    totalPages={4}
-                    onPageChange={setCurrentPage}
-                />
+                        <p className="max-w-md text-sm leading-6 text-[#CFB28C]">
+                            Não encontramos NFTs que correspondam aos filtros selecionados.
+                            Experimente alterar sua seleção.
+                        </p>
+                    </div>
+                )}
+
+                {sortedNfts.length > 0 && (
+                    <ProductPagination
+                        currentPage={currentPage}
+                        totalPages={4}
+                        onPageChange={setCurrentPage}
+                    />
+                )}
             </div>
         </section>
     )
