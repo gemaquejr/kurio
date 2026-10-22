@@ -91,6 +91,7 @@ type FiltersProps = {
     onCollectionToggle: (id: string) => void
     selectedNetworks: string[]
     onNetworkToggle: (id: string) => void
+    onPriceApply: (range: { min: number; max: number }) => void
 }
 
 export function Filters({
@@ -98,6 +99,7 @@ export function Filters({
     onCollectionToggle,
     selectedNetworks,
     onNetworkToggle,
+    onPriceApply,
 }: FiltersProps) {
     return (
         <div className="w-full bg-[#241612] p-5">
@@ -109,7 +111,7 @@ export function Filters({
                     onToggle={onCollectionToggle}
                 />
 
-                <PriceFilter />
+                <PriceFilter onApply={onPriceApply} />
 
                 <FilterGroup
                     title="Rede"

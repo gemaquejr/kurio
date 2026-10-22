@@ -33,6 +33,11 @@ export function Products() {
 
     const [selectedNetworks, setSelectedNetworks] = useState<string[]>([])
 
+    const [appliedPriceRange, setAppliedPriceRange] = useState<{
+        min: number
+        max: number
+    } | null>(null)
+
     function handleNetworkToggle(id: string) {
         setSelectedNetworks((current) =>
             current.includes(id)
@@ -57,9 +62,16 @@ export function Products() {
                 (nft.network !== undefined &&
                     selectedNetworks.includes(nft.network))
 
-            return matchesCollection && matchesNetwork
+            const matchesPrice =
+                appliedPriceRange === null ||
+                (nft.price !== undefined &&
+                    nft.price >= appliedPriceRange.min &&
+                    nft.price <= appliedPriceRange.max)
+
+            return matchesCollection && matchesNetwork && matchesPrice
         })
-    }, [selectedCollections, selectedNetworks])
+
+    }, [selectedCollections, selectedNetworks, appliedPriceRange])
 
     const sortedNfts = useMemo(() => {
         const items = [...filteredNfts]
@@ -103,6 +115,7 @@ export function Products() {
                     onCollectionToggle={handleCollectionToggle}
                     selectedNetworks={selectedNetworks}
                     onNetworkToggle={handleNetworkToggle}
+                    onPriceApply={setAppliedPriceRange}
                 />
                 <FeaturedNft />
             </aside>

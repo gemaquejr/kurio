@@ -163,3 +163,135 @@ test('deve exibir estado vazio quando nenhum NFT corresponder aos filtros', asyn
         products.getByRole('status'),
     ).toHaveCount(0)
 })
+
+test('deve aplicar o filtro de preço somente após clicar em Aplicar', async ({
+    page,
+}) => {
+    await page.goto('/')
+
+    const products = page.getByLabel('Listagem de NFTs')
+    const cards = products.locator('article')
+
+    const minPrice = page.getByRole('slider', {
+        name: 'Preço mínimo',
+    })
+
+    const applyButton = page.getByRole('button', {
+        name: 'Aplicar',
+    })
+
+    // Inicialmente, todos os NFTs aparecem.
+    await expect(cards).toHaveCount(9)
+
+    // Ajustar o preço mínimo para 1,50 ETH.
+    await minPrice.evaluate((element: HTMLInputElement) => {
+        const nativeSetter = Object.getOwnPropertyDescriptor(
+            HTMLInputElement.prototype,
+            'value',
+        )?.set
+
+        nativeSetter?.call(element, '1.50')
+
+        element.dispatchEvent(new Event('input', { bubbles: true }))
+        element.dispatchEvent(new Event('change', { bubbles: true }))
+    })
+
+    await expect(minPrice).toHaveValue('1.5')
+
+    // Alterar o slider não deve aplicar o filtro automaticamente.
+    await expect(cards).toHaveCount(9)
+
+    // Aplicar o intervalo selecionado.
+    await applyButton.click()
+
+    // NFTs com preço abaixo de 1,50 ETH são removidos.
+    await expect(cards).toHaveCount(3)
+
+    await expect(products).toContainText('Sage Nomad #009')
+    await expect(products).toContainText('Neon Vessel #552')
+    await expect(products).toContainText('Ivory Baron #088')
+
+    await expect(products).not.toContainText('Golden Signal #160')
+    await expect(products).not.toContainText('Emerald Ape #042')
+})
+
+test('deve combinar filtros de coleção, rede e preço', async ({
+    page,
+}) => {
+    await page.goto('/')
+
+    const products = page.getByLabel('Listagem de NFTs')
+    const cards = products.locator('article')
+
+    const collections = page.getByRole('group', {
+        name: 'Coleções',
+    })
+
+    const networks = page.getByRole('group', {
+        name: 'Rede',
+    })
+
+    const minPrice = page.getByRole('slider', {
+        name: 'Preço mínimo',
+    })
+
+    await expect(cards).toHaveCount(9)
+
+    // Selecionar Arte digital: Emerald Ape e Violet Nomad.
+    await collections.getByRole('checkbox', {
+        name: 'Arte digital',
+    }).check()
+
+    await expect(cards).toHaveCount(2)
+
+    // Selecionar Polygon: permanece apenas Violet Nomad.
+    await networks.getByRole('checkbox', {
+        name: 'Polygon',
+    }).check()
+
+    await expect(cards).toHaveCount(1)
+    await expect(products).toContainText('Violet Nomad #314')
+
+    // Definir preço mínimo de 1,50 ETH.
+    await minPrice.evaluate((element: HTMLInputElement) => {
+        const nativeSetter = Object.getOwnPropertyDescriptor(
+            HTMLInputElement.prototype,
+            'value',
+        )?.set
+
+        nativeSetter?.call(element, '1.50')
+
+        element.dispatchEvent(new Event('input', { bubbles: true }))
+        element.dispatchEvent(new Event('change', { bubbles: true }))
+    })
+
+    // Antes de aplicar, Violet Nomad ainda deve aparecer.
+    await expect(cards).toHaveCount(1)
+
+    await page.getByRole('button', {
+        name: 'Aplicar',
+    }).click()
+
+    // Violet Nomad custa 1,39 ETH e deve ser removido.
+    await expect(cards).toHaveCount(0)
+
+    await expect(
+        products.getByRole('status'),
+    ).toContainText('Nenhum NFT encontrado')
+
+    // Remover a coleção e a rede mantém o filtro de preço.
+    await collections.getByRole('checkbox', {
+        name: 'Arte digital',
+    }).uncheck()
+
+    await networks.getByRole('checkbox', {
+        name: 'Polygon',
+    }).uncheck()
+
+    // Restam os três NFTs com preço a partir de 1,50 ETH.
+    await expect(cards).toHaveCount(3)
+
+    await expect(products).toContainText('Sage Nomad #009')
+    await expect(products).toContainText('Neon Vessel #552')
+    await expect(products).toContainText('Ivory Baron #088')
+})
