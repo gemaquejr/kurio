@@ -1,7 +1,21 @@
 import { Filters } from './filters'
 import { FeaturedNft } from './featured-nft'
+import { useState } from 'react'
+import { ProductToolbar } from './product-toolbar'
+import { NftGrid } from './nft-grid'
+import { ProductPagination } from './product-pagination'
 
 export function Products() {
+    const [activeTab, setActiveTab] = useState<
+        'all' | 'new' | 'trending'
+    >('all')
+
+    const [sortBy, setSortBy] = useState<
+        'recent' | 'price-low' | 'price-high'
+    >('recent')
+
+    const [currentPage, setCurrentPage] = useState(1)
+
     return (
         <section
             id="mercado"
@@ -18,8 +32,23 @@ export function Products() {
 
             <div
                 aria-label="Listagem de NFTs"
-                className="min-w-0"
-            />
+                className="flex min-w-0 flex-col gap-8"
+            >
+                <ProductToolbar
+                    activeTab={activeTab}
+                    onTabChange={setActiveTab}
+                    sortBy={sortBy}
+                    onSortChange={setSortBy}
+                />
+
+                <NftGrid />
+
+                <ProductPagination
+                    currentPage={currentPage}
+                    totalPages={4}
+                    onPageChange={setCurrentPage}
+                />
+            </div>
         </section>
     )
 }
