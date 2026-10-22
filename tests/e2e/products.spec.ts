@@ -295,3 +295,56 @@ test('deve combinar filtros de coleção, rede e preço', async ({
     await expect(products).toContainText('Neon Vessel #552')
     await expect(products).toContainText('Ivory Baron #088')
 })
+
+test('deve ajustar a paginação conforme os resultados filtrados', async ({
+    page,
+}) => {
+    await page.goto('/')
+
+    const products = page.getByLabel('Listagem de NFTs')
+    const cards = products.locator('article')
+
+    const pagination = page.getByRole('navigation', {
+        name: 'Paginação dos NFTs',
+    })
+
+    // Os nove NFTs devem aparecer na página inicial.
+    await expect(cards).toHaveCount(9)
+
+    await expect(products).toContainText('Emerald Ape #042')
+    await expect(products).toContainText('Golden Signal #160')
+
+    // Com nove NFTs, existe somente uma página.
+    await expect(
+        page.getByRole('button', { name: 'Página 1' }),
+    ).toHaveAttribute('aria-current', 'page')
+
+    await expect(
+        page.getByRole('button', { name: 'Página 2' }),
+    ).toHaveCount(0)
+
+    await expect(
+        page.getByRole('button', { name: 'Próxima página' }),
+    ).toBeDisabled()
+
+    // Aplicar um filtro reduz a quantidade de resultados.
+    const collections = page.getByRole('group', {
+        name: 'Coleções',
+    })
+
+    await collections.getByRole('checkbox', {
+        name: 'Arte digital',
+    }).check()
+
+    await expect(cards).toHaveCount(2)
+
+    await expect(products).toContainText('Emerald Ape #042')
+    await expect(products).toContainText('Violet Nomad #314')
+
+    // A paginação continua consistente.
+    await expect(pagination).toBeVisible()
+
+    await expect(
+        page.getByRole('button', { name: 'Página 1' }),
+    ).toHaveAttribute('aria-current', 'page')
+})

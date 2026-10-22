@@ -18,6 +18,8 @@ const collectionNames: Record<string, string> = {
     utility: 'Utilidade',
 }
 
+const ITEMS_PER_PAGE = 9
+
 export function Products() {
     const [activeTab, setActiveTab] = useState<
         'all' | 'new' | 'trending'
@@ -44,6 +46,8 @@ export function Products() {
                 ? current.filter((item) => item !== id)
                 : [...current, id],
         )
+
+        setCurrentPage(1)
     }
 
     const filteredNfts = useMemo(() => {
@@ -92,12 +96,36 @@ export function Products() {
         }
     }, [filteredNfts, sortBy])
 
+    const totalPages = Math.ceil(sortedNfts.length / ITEMS_PER_PAGE)
+
+    const paginatedNfts = useMemo(() => {
+        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+
+        return sortedNfts.slice(
+            startIndex,
+            startIndex + ITEMS_PER_PAGE,
+        )
+    }, [sortedNfts, currentPage])
+
     function handleCollectionToggle(id: string) {
         setSelectedCollections((current) =>
             current.includes(id)
                 ? current.filter((item) => item !== id)
                 : [...current, id],
         )
+        setCurrentPage(1)
+    }
+
+    function handlePriceApply(range: { min: number; max: number }) {
+        setAppliedPriceRange(range)
+        setCurrentPage(1)
+    }
+
+    function handleSortChange(
+        value: 'recent' | 'price-low' | 'price-high',
+    ) {
+        setSortBy(value)
+        setCurrentPage(1)
     }
 
     return (
@@ -115,7 +143,7 @@ export function Products() {
                     onCollectionToggle={handleCollectionToggle}
                     selectedNetworks={selectedNetworks}
                     onNetworkToggle={handleNetworkToggle}
-                    onPriceApply={setAppliedPriceRange}
+                    onPriceApply={handlePriceApply}
                 />
                 <FeaturedNft />
             </aside>
@@ -128,11 +156,11 @@ export function Products() {
                     activeTab={activeTab}
                     onTabChange={setActiveTab}
                     sortBy={sortBy}
-                    onSortChange={setSortBy}
+                    onSortChange={handleSortChange}
                 />
 
                 {sortedNfts.length > 0 ? (
-                    <NftGrid nfts={sortedNfts} />
+                    <NftGrid nfts={paginatedNfts} />
                 ) : (
                     <div
                         role="status"
@@ -152,7 +180,7 @@ export function Products() {
                 {sortedNfts.length > 0 && (
                     <ProductPagination
                         currentPage={currentPage}
-                        totalPages={4}
+                        totalPages={totalPages}
                         onPageChange={setCurrentPage}
                     />
                 )}
