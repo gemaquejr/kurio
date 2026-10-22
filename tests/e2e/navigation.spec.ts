@@ -7,7 +7,8 @@ test('navega entre a página inicial e Sobre', async ({ page }) => {
         page.getByRole('heading', { name: 'Kurio Marketplace' }),
     ).toBeVisible()
 
-    await page.getByRole('link', { name: 'Sobre' }).click()
+    // A rota Sobre é temporária e não faz parte do Header do Figma.
+    await page.goto('/about')
 
     await expect(page).toHaveURL(/\/about$/)
 
