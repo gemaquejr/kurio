@@ -1,4 +1,5 @@
 import { Filters } from './filters'
+import { FeaturedNft } from './featured-nft'
 
 export function Products() {
     return (
@@ -9,9 +10,10 @@ export function Products() {
         >
             <aside
                 aria-label="Filtros do marketplace"
-                className="min-w-0"
+                className="flex min-w-0 flex-col gap-6"
             >
                 <Filters />
+                <FeaturedNft />
             </aside>
 
             <div
