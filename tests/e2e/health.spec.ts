@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 test('consulta a API simulada com sucesso', async ({ page }) => {
-    await page.goto('/')
+    await page.goto('/dev-health')
 
     await expect(
         page.getByText('MSW + Axios + TanStack Query funcionando!'),
@@ -17,7 +17,7 @@ test('consulta a API simulada com sucesso', async ({ page }) => {
 })
 
 test('exibe o erro retornado pela API simulada', async ({ page }) => {
-    await page.goto('/')
+    await page.goto('/dev-health')
 
     await page.getByRole('button', {
         name: 'Simular erro',

@@ -4,7 +4,7 @@ test('navega entre a página inicial e Sobre', async ({ page }) => {
     await page.goto('/')
 
     await expect(
-        page.getByRole('heading', { name: 'Kurio Marketplace' }),
+        page.getByRole('group', { name: 'Categorias de NFTs' }),
     ).toBeVisible()
 
     // A rota Sobre é temporária e não faz parte do Header do Figma.
@@ -23,6 +23,6 @@ test('navega entre a página inicial e Sobre', async ({ page }) => {
     await expect(page).toHaveURL(/\/$/)
 
     await expect(
-        page.getByRole('heading', { name: 'Kurio Marketplace' }),
+        page.getByRole('group', { name: 'Categorias de NFTs' }),
     ).toBeVisible()
 })
