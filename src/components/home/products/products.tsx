@@ -1,9 +1,10 @@
 import { Filters } from './filters'
 import { FeaturedNft } from './featured-nft'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ProductToolbar } from './product-toolbar'
 import { NftGrid } from './nft-grid'
 import { ProductPagination } from './product-pagination'
+import { nfts } from './nft-data'
 
 export function Products() {
     const [activeTab, setActiveTab] = useState<
@@ -15,6 +16,25 @@ export function Products() {
     >('recent')
 
     const [currentPage, setCurrentPage] = useState(1)
+
+    const sortedNfts = useMemo(() => {
+        const items = [...nfts]
+
+        switch (sortBy) {
+            case 'price-low':
+                return items.sort(
+                    (a, b) => (a.price ?? Infinity) - (b.price ?? Infinity),
+                )
+
+            case 'price-high':
+                return items.sort(
+                    (a, b) => (b.price ?? -Infinity) - (a.price ?? -Infinity),
+                )
+
+            default:
+                return items
+        }
+    }, [sortBy])
 
     return (
         <section
@@ -41,7 +61,7 @@ export function Products() {
                     onSortChange={setSortBy}
                 />
 
-                <NftGrid />
+                <NftGrid nfts={sortedNfts} />
 
                 <ProductPagination
                     currentPage={currentPage}

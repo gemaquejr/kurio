@@ -1,7 +1,10 @@
-import { NftCard } from './nft-card'
-import { nfts } from './nft-data'
+import { NftCard, type Nft } from './nft-card'
 
-export function NftGrid() {
+type NftGridProps = {
+    nfts: Nft[]
+}
+
+export function NftGrid({ nfts }: NftGridProps) {
     return (
         <div
             aria-label="Produtos disponíveis"
