@@ -424,3 +424,169 @@ test('deve alternar entre as abas e combinar com filtros', async ({
 
     await expect(cards).toHaveCount(9)
 })
+
+test('deve adaptar a grade de NFTs aos diferentes tamanhos de tela', async ({
+    page,
+}) => {
+    const viewports = [
+        { width: 375, height: 812, columns: 1 },
+        { width: 768, height: 1024, columns: 2 },
+        { width: 1440, height: 900, columns: 3 },
+    ]
+
+    for (const viewport of viewports) {
+        await page.setViewportSize({
+            width: viewport.width,
+            height: viewport.height,
+        })
+
+        await page.goto('/')
+
+        const grid = page.getByLabel('Produtos disponíveis')
+
+        await expect(grid).toBeVisible()
+
+        const actualColumns = await grid.evaluate((element) => {
+            const styles = window.getComputedStyle(element)
+            return styles.gridTemplateColumns.split(' ').length
+        })
+
+        expect(actualColumns).toBe(viewport.columns)
+
+        const hasHorizontalOverflow = await page.evaluate(() => {
+            return (
+                document.documentElement.scrollWidth >
+                document.documentElement.clientWidth
+            )
+        })
+
+        expect(
+            hasHorizontalOverflow,
+            `Rolagem horizontal detectada em ${viewport.width}px`,
+        ).toBe(false)
+    }
+})
+
+test('deve manter os filtros acessíveis em diferentes larguras', async ({
+    page,
+}) => {
+    const viewports = [
+        { width: 375, height: 812, sideBySide: false },
+        { width: 768, height: 1024, sideBySide: false },
+        { width: 1200, height: 900, sideBySide: true },
+        { width: 1440, height: 900, sideBySide: true },
+    ]
+
+    for (const viewport of viewports) {
+        await page.setViewportSize({
+            width: viewport.width,
+            height: viewport.height,
+        })
+
+        await page.goto('/')
+
+        const sidebar = page.getByLabel('Filtros do marketplace')
+        const products = page.getByLabel('Listagem de NFTs')
+
+        await expect(sidebar).toBeVisible()
+        await expect(products).toBeVisible()
+
+        const sidebarBox = await sidebar.boundingBox()
+        const productsBox = await products.boundingBox()
+
+        expect(sidebarBox).not.toBeNull()
+        expect(productsBox).not.toBeNull()
+
+        if (!sidebarBox || !productsBox) {
+            throw new Error('Não foi possível medir o layout')
+        }
+
+        if (viewport.sideBySide) {
+            // Sidebar posicionada à esquerda da listagem.
+            expect(sidebarBox.x + sidebarBox.width).toBeLessThanOrEqual(
+                productsBox.x,
+            )
+        } else {
+            // Sidebar posicionada acima da listagem.
+            expect(sidebarBox.y + sidebarBox.height).toBeLessThanOrEqual(
+                productsBox.y,
+            )
+        }
+
+        // Os filtros devem permanecer dentro da largura da tela.
+        expect(sidebarBox.x).toBeGreaterThanOrEqual(0)
+
+        expect(
+            sidebarBox.x + sidebarBox.width,
+        ).toBeLessThanOrEqual(viewport.width)
+
+        // Os campos devem permanecer disponíveis.
+        await expect(
+            sidebar.getByRole('group', { name: 'Coleções' }),
+        ).toBeVisible()
+
+        await expect(
+            sidebar.getByRole('group', { name: 'Rede' }),
+        ).toBeVisible()
+    }
+})
+
+test('deve manter os cards dentro da grade em larguras intermediárias', async ({
+    page,
+}) => {
+    for (const width of [1200, 1240, 1279, 1280]) {
+        await page.setViewportSize({
+            width,
+            height: 900,
+        })
+
+        await page.goto('/')
+
+        const grid = page.getByLabel('Produtos disponíveis')
+        const cards = grid.locator('article')
+
+        await expect(cards).toHaveCount(9)
+
+        const layout = await grid.evaluate((element) => {
+            const gridRect = element.getBoundingClientRect()
+
+            return {
+                gridLeft: gridRect.left,
+                gridRight: gridRect.right,
+                cards: Array.from(element.querySelectorAll('article')).map(
+                    (card) => {
+                        const cardRect = card.getBoundingClientRect()
+                        const image = card.querySelector('img')
+                        const imageRect = image?.getBoundingClientRect()
+
+                        return {
+                            left: cardRect.left,
+                            right: cardRect.right,
+                            imageWidth: imageRect?.width ?? 0,
+                            imageHeight: imageRect?.height ?? 0,
+                        }
+                    },
+                ),
+            }
+        })
+
+        for (const card of layout.cards) {
+            expect(card.left).toBeGreaterThanOrEqual(layout.gridLeft - 1)
+            expect(card.right).toBeLessThanOrEqual(layout.gridRight + 1)
+
+            expect(card.imageWidth).toBeGreaterThan(0)
+            expect(card.imageHeight).toBeGreaterThan(0)
+        }
+
+        const hasHorizontalOverflow = await page.evaluate(
+            () =>
+                document.documentElement.scrollWidth >
+                document.documentElement.clientWidth,
+        )
+
+        expect(
+            hasHorizontalOverflow,
+            `Rolagem horizontal em ${width}px`,
+        ).toBe(false)
+    }
+})
