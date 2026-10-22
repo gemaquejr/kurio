@@ -348,3 +348,79 @@ test('deve ajustar a paginação conforme os resultados filtrados', async ({
         page.getByRole('button', { name: 'Página 1' }),
     ).toHaveAttribute('aria-current', 'page')
 })
+
+test('deve alternar entre as abas e combinar com filtros', async ({
+    page,
+}) => {
+    await page.goto('/')
+
+    const products = page.getByLabel('Listagem de NFTs')
+    const cards = products.locator('article')
+
+    const allTab = page.getByRole('button', {
+        name: 'Todos os NFTs',
+    })
+
+    const newTab = page.getByRole('button', {
+        name: 'Novos lançamentos',
+    })
+
+    const trendingTab = page.getByRole('button', {
+        name: 'Em alta',
+    })
+
+    // A aba inicial deve apresentar todos os NFTs.
+    await expect(allTab).toHaveAttribute('aria-pressed', 'true')
+    await expect(cards).toHaveCount(9)
+
+    // Exibir apenas os novos lançamentos.
+    await newTab.click()
+
+    await expect(newTab).toHaveAttribute('aria-pressed', 'true')
+    await expect(allTab).toHaveAttribute('aria-pressed', 'false')
+    await expect(cards).toHaveCount(4)
+
+    await expect(products).toContainText('Emerald Ape #042')
+    await expect(products).toContainText('Sage Nomad #009')
+    await expect(products).toContainText('Cosmic Bloom #118')
+    await expect(products).toContainText('Golden Beat #207')
+
+    // Exibir apenas os NFTs em alta.
+    await trendingTab.click()
+
+    await expect(trendingTab).toHaveAttribute('aria-pressed', 'true')
+    await expect(newTab).toHaveAttribute('aria-pressed', 'false')
+    await expect(cards).toHaveCount(4)
+
+    await expect(products).toContainText('Emerald Ape #042')
+    await expect(products).toContainText('Neon Vessel #552')
+    await expect(products).toContainText('Violet Nomad #314')
+    await expect(products).toContainText('Golden Signal #160')
+
+    // Combinar a aba Em alta com a coleção Arte digital.
+    const collections = page.getByRole('group', {
+        name: 'Coleções',
+    })
+
+    await collections.getByRole('checkbox', {
+        name: 'Arte digital',
+    }).check()
+
+    await expect(cards).toHaveCount(2)
+
+    await expect(products).toContainText('Emerald Ape #042')
+    await expect(products).toContainText('Violet Nomad #314')
+
+    // Voltar para Todos mantém o filtro de coleção aplicado.
+    await allTab.click()
+
+    await expect(allTab).toHaveAttribute('aria-pressed', 'true')
+    await expect(cards).toHaveCount(2)
+
+    // Remover o filtro restaura os nove NFTs.
+    await collections.getByRole('checkbox', {
+        name: 'Arte digital',
+    }).uncheck()
+
+    await expect(cards).toHaveCount(9)
+})

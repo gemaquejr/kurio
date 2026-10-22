@@ -6,6 +6,8 @@ export type Nft = {
     image: string
     collection?: string
     network?: 'ethereum' | 'polygon' | 'solana'
+    isNew?: boolean
+    isTrending?: boolean
 }
 
 type NftCardProps = {

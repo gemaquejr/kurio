@@ -40,6 +40,11 @@ export function Products() {
         max: number
     } | null>(null)
 
+    function handleTabChange(tab: 'all' | 'new' | 'trending') {
+        setActiveTab(tab)
+        setCurrentPage(1)
+    }
+
     function handleNetworkToggle(id: string) {
         setSelectedNetworks((current) =>
             current.includes(id)
@@ -56,6 +61,11 @@ export function Products() {
         )
 
         return nfts.filter((nft) => {
+            const matchesTab =
+                activeTab === 'all' ||
+                (activeTab === 'new' && nft.isNew === true) ||
+                (activeTab === 'trending' && nft.isTrending === true)
+
             const matchesCollection =
                 selectedCollections.length === 0 ||
                 (nft.collection !== undefined &&
@@ -72,10 +82,10 @@ export function Products() {
                     nft.price >= appliedPriceRange.min &&
                     nft.price <= appliedPriceRange.max)
 
-            return matchesCollection && matchesNetwork && matchesPrice
+            return matchesTab && matchesCollection && matchesNetwork && matchesPrice
         })
 
-    }, [selectedCollections, selectedNetworks, appliedPriceRange])
+    }, [activeTab, selectedCollections, selectedNetworks, appliedPriceRange])
 
     const sortedNfts = useMemo(() => {
         const items = [...filteredNfts]
@@ -154,7 +164,7 @@ export function Products() {
             >
                 <ProductToolbar
                     activeTab={activeTab}
-                    onTabChange={setActiveTab}
+                    onTabChange={handleTabChange}
                     sortBy={sortBy}
                     onSortChange={handleSortChange}
                 />

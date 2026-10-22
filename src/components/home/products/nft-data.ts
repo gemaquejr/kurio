@@ -13,6 +13,8 @@ export const nfts: Nft[] = [
         image: hero,
         collection: 'Arte digital',
         network: 'ethereum',
+        isNew: true,
+        isTrending: true,
     },
     {
         id: 'sage-nomad-009',
@@ -21,6 +23,7 @@ export const nfts: Nft[] = [
         image: artwork04,
         collection: 'Fotografia',
         network: 'polygon',
+        isNew: true,
     },
     {
         id: 'neon-vessel-552',
@@ -30,6 +33,7 @@ export const nfts: Nft[] = [
         image: artwork05,
         collection: 'Arte 3D',
         network: 'solana',
+        isTrending: true,
     },
     {
         id: 'cosmic-bloom-118',
@@ -38,6 +42,7 @@ export const nfts: Nft[] = [
         image: artwork04,
         collection: 'Generativa',
         network: 'ethereum',
+        isNew: true,
     },
     {
         id: 'violet-nomad-314',
@@ -46,6 +51,7 @@ export const nfts: Nft[] = [
         image: artwork04,
         collection: 'Arte digital',
         network: 'polygon',
+        isTrending: true,
     },
     {
         id: 'ivory-baron-088',
@@ -62,6 +68,7 @@ export const nfts: Nft[] = [
         image: artwork09,
         collection: 'Música',
         network: 'solana',
+        isNew: true,
     },
     {
         id: 'artwork-09',
@@ -76,5 +83,6 @@ export const nfts: Nft[] = [
         image: artwork09,
         collection: 'Utilidade',
         network: 'polygon',
+        isTrending: true,
     },
 ]
