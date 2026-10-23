@@ -3,13 +3,14 @@ import { Top } from '@/components/home/top'
 import { Products } from '@/components/home/products/products'
 import { Promos } from '@/components/home/promos/promos'
 import { Blog } from '@/components/home/blog/blog'
+import { Footer } from '@/components/layout/footer/footer'
 
 export const Route = createFileRoute('/')({
     component: HomePage,
 })
 
 function HomePage() {
-    return (
+    return (<>
         <main className="px-5 pt-6 min-[1440px]:px-30">
             <Top />
             <Products />
@@ -20,5 +21,10 @@ function HomePage() {
                 <Blog />
             </div>
         </main>
+
+        <div className="mt-20">
+            <Footer />
+        </div>
+    </>
     )
 }
