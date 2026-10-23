@@ -18,7 +18,7 @@ test.describe('Sign Up Modal', () => {
             dialog.getByRole('tab', { name: 'Criar conta' }),
         ).toHaveAttribute('aria-selected', 'true')
 
-        await expect(dialog.getByLabel('Nome completo')).toBeVisible()
+        await expect(dialog.getByLabel('Nome de usuário')).toBeVisible()
         await expect(dialog.getByLabel('E-mail')).toBeVisible()
         await expect(
             dialog.getByLabel('Senha', { exact: true }),
@@ -41,7 +41,7 @@ test.describe('Sign Up Modal', () => {
             exact: true,
         }).click()
 
-        await expect(dialog.getByLabel('Nome completo')).toBeFocused()
+        await expect(dialog.getByLabel('Nome de usuário')).toBeFocused()
 
         await expect(dialog.getByRole('status')).toHaveCount(0)
     })
@@ -49,7 +49,7 @@ test.describe('Sign Up Modal', () => {
     test('deve validar senhas diferentes', async ({ page }) => {
         const dialog = page.getByRole('dialog')
 
-        await dialog.getByLabel('Nome completo').fill('Usuário Teste')
+        await dialog.getByLabel('Nome de usuário').fill('Usuário Teste')
         await dialog.getByLabel('E-mail').fill('usuario@exemplo.com')
         await dialog.getByLabel('Senha', { exact: true }).fill('Senha123!')
         await dialog.getByLabel('Confirmar senha').fill('OutraSenha123!')
@@ -67,7 +67,7 @@ test.describe('Sign Up Modal', () => {
     test('deve informar indisponibilidade do cadastro válido', async ({ page }) => {
         const dialog = page.getByRole('dialog')
 
-        await dialog.getByLabel('Nome completo').fill('Usuário Teste')
+        await dialog.getByLabel('Nome de usuário').fill('Usuário Teste')
         await dialog.getByLabel('E-mail').fill('usuario@exemplo.com')
         await dialog.getByLabel('Senha', { exact: true }).fill('Senha123!')
         await dialog.getByLabel('Confirmar senha').fill('Senha123!')
@@ -92,7 +92,7 @@ test.describe('Sign Up Modal', () => {
         ).toHaveAttribute('aria-selected', 'true')
 
         await expect(
-            dialog.getByLabel('Nome completo'),
+            dialog.getByLabel('Nome de usuário'),
         ).toHaveCount(0)
 
         await expect(
@@ -101,6 +101,6 @@ test.describe('Sign Up Modal', () => {
 
         await dialog.getByRole('tab', { name: 'Criar conta' }).click()
 
-        await expect(dialog.getByLabel('Nome completo')).toBeVisible()
+        await expect(dialog.getByLabel('Nome de usuário')).toBeVisible()
     })
 })

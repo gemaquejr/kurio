@@ -29,7 +29,7 @@ export function SignUpForm() {
             className="flex w-full flex-col gap-3 px-6 pt-6 sm:px-20"
         >
             <label htmlFor="sign-up-name" className="sr-only">
-                Nome completo
+                Nome de usuário
             </label>
             <input
                 id="sign-up-name"
@@ -41,12 +41,12 @@ export function SignUpForm() {
                     setName(event.target.value)
                     setMessage('')
                 }}
-                placeholder="Nome completo"
+                placeholder="Nome de usuário"
                 className={inputClassName}
             />
 
             <label htmlFor="sign-up-email" className="sr-only">
-                E-mail
+                Digite seu e-mail
             </label>
             <input
                 id="sign-up-email"
@@ -58,7 +58,7 @@ export function SignUpForm() {
                     setEmail(event.target.value)
                     setMessage('')
                 }}
-                placeholder="contato@email.com"
+                placeholder="Digite seu e-mail"
                 className={inputClassName}
             />
 
@@ -77,7 +77,7 @@ export function SignUpForm() {
                         setPassword(event.target.value)
                         setMessage('')
                     }}
-                    placeholder="Senha (mínimo de 8 caracteres)"
+                    placeholder="Senha"
                     className={`${inputClassName} pr-12`}
                 />
                 <button

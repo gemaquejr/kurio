@@ -139,7 +139,7 @@ export function SignInModal({ onClose }: SignInModalProps) {
                     <p className="mt-10 max-w-101 text-center text-[13px] leading-4">
                         {activeTab === 'sign-in'
                             ? 'Entre para gerenciar sua carteira, coleção e perfil de criador.'
-                            : 'Crie sua conta para começar a explorar o universo Kurio.'}
+                            : 'Crie seu perfil de colecionador e conecte uma carteira quando quiser.'}
                     </p>
                 </div>
 
