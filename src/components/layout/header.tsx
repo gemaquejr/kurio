@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router'
 import { LogOut, Menu, Search, ShoppingCart, X } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { SignInModal } from '@/components/auth/sign-in-modal'
 
 type ActivePage = 'home' | 'market' | 'creators' | 'learn'
 
@@ -29,6 +30,12 @@ export function Header({
     cartCount = 6,
 }: HeaderProps) {
     const [menuOpen, setMenuOpen] = useState(false)
+    const [signInOpen, setSignInOpen] = useState(false)
+
+    function openSignIn() {
+        setMenuOpen(false)
+        setSignInOpen(true)
+    }
 
     return (
         <header className="w-full bg-background text-foreground">
@@ -95,6 +102,7 @@ export function Header({
                         <Button
                             type="button"
                             className="h-8.75 w-25 shrink-0 gap-2 rounded-[6px] bg-primary px-0 text-[16px] leading-none font-medium tracking-normal text-[#140D0A] hover:bg-primary/90 hover:text-[#140D0A]"
+                            onClick={openSignIn}
                         >
                             <LogOut size={20} strokeWidth={1.75} aria-hidden="true" />
                             <span>Entrar</span>
@@ -143,12 +151,16 @@ export function Header({
                         <Button
                             type="button"
                             className="h-8.75 w-25 shrink-0 rounded-[6px] bg-primary px-0 text-[16px] leading-none font-medium tracking-normal text-[#140D0A] hover:bg-primary/90 hover:text-[#140D0A]"
+                            onClick={openSignIn}
                         >
                             Entrar
                         </Button>
                     </nav>
                 )}
             </div>
+            {signInOpen && (
+                <SignInModal onClose={() => setSignInOpen(false)} />
+            )}
         </header>
     )
 }
