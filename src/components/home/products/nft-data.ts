@@ -15,6 +15,17 @@ export const nfts: Nft[] = [
         network: 'ethereum',
         isNew: true,
         isTrending: true,
+        description:
+            'Um colecionável digital finalizado à mão da coleção Kurio Editions, verificado na Ethereum, com arte desbloqueável e acesso para colecionadores.',
+        tokenId: '#0042',
+        attributes: ['Óculos', 'Esmeralda', 'Raro'],
+        reviewCount: 19,
+        tokenCollection: 'Kurio Apes',
+        storage: 'IPFS',
+        contract: '0x7A42...19E8',
+        royalties: 5,
+        details:
+            'Emerald Ape #042 faz parte da coleção Kurio Apes, uma seleção de colecionáveis digitais com identidade visual própria. Esta edição demonstra os recursos de apresentação de NFTs da plataforma Kurio.',
     },
     {
         id: 'sage-nomad-009',
