@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as DevHealthRouteImport } from './routes/dev-health'
+import { Route as AccountAccountSidebarRouteImport } from './routes/account/account-sidebar'
+import { Route as AccountProfileRouteImport } from './routes/account/profile'
 import { Route as NftNftIdRouteImport } from './routes/nft/$nftId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +31,16 @@ const DevHealthRoute = DevHealthRouteImport.update({
   path: '/dev-health',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountAccountSidebarRoute = AccountAccountSidebarRouteImport.update({
+  id: '/account/account-sidebar',
+  path: '/account/account-sidebar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountProfileRoute = AccountProfileRouteImport.update({
+  id: '/account/profile',
+  path: '/account/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NftNftIdRoute = NftNftIdRouteImport.update({
   id: '/nft/$nftId',
   path: '/nft/$nftId',
@@ -39,12 +51,16 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/dev-health': typeof DevHealthRoute
+  '/account/account-sidebar': typeof AccountAccountSidebarRoute
+  '/account/profile': typeof AccountProfileRoute
   '/nft/$nftId': typeof NftNftIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/dev-health': typeof DevHealthRoute
+  '/account/account-sidebar': typeof AccountAccountSidebarRoute
+  '/account/profile': typeof AccountProfileRoute
   '/nft/$nftId': typeof NftNftIdRoute
 }
 export interface FileRoutesById {
@@ -52,20 +68,43 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/dev-health': typeof DevHealthRoute
+  '/account/account-sidebar': typeof AccountAccountSidebarRoute
+  '/account/profile': typeof AccountProfileRoute
   '/nft/$nftId': typeof NftNftIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/dev-health' | '/nft/$nftId'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/dev-health'
+    | '/account/account-sidebar'
+    | '/account/profile'
+    | '/nft/$nftId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/dev-health' | '/nft/$nftId'
-  id: '__root__' | '/' | '/about' | '/dev-health' | '/nft/$nftId'
+  to:
+    | '/'
+    | '/about'
+    | '/dev-health'
+    | '/account/account-sidebar'
+    | '/account/profile'
+    | '/nft/$nftId'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/dev-health'
+    | '/account/account-sidebar'
+    | '/account/profile'
+    | '/nft/$nftId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   DevHealthRoute: typeof DevHealthRoute
+  AccountAccountSidebarRoute: typeof AccountAccountSidebarRoute
+  AccountProfileRoute: typeof AccountProfileRoute
   NftNftIdRoute: typeof NftNftIdRoute
 }
 
@@ -92,6 +131,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DevHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account/account-sidebar': {
+      id: '/account/account-sidebar'
+      path: '/account/account-sidebar'
+      fullPath: '/account/account-sidebar'
+      preLoaderRoute: typeof AccountAccountSidebarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account/profile': {
+      id: '/account/profile'
+      path: '/account/profile'
+      fullPath: '/account/profile'
+      preLoaderRoute: typeof AccountProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/nft/$nftId': {
       id: '/nft/$nftId'
       path: '/nft/$nftId'
@@ -106,6 +159,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   DevHealthRoute: DevHealthRoute,
+  AccountAccountSidebarRoute: AccountAccountSidebarRoute,
+  AccountProfileRoute: AccountProfileRoute,
   NftNftIdRoute: NftNftIdRoute,
 }
 export const routeTree = rootRouteImport
